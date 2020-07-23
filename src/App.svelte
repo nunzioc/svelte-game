@@ -1,6 +1,7 @@
 <script>
 let selected = -1;
 const BIG = 50;
+const MEDIUM = 40;
 const SMALL = 30;
 
 let seconds = 0;
@@ -14,6 +15,13 @@ setInterval(() => {
 				planet.control = 'player';
 			}
 		} else if (planet.size === BIG) {
+			if (planet.control === 'player') {
+    			planet.playerShips++;
+			} else {
+				planet.neutralShips++;
+			}
+		}
+		if (seconds % 2 === 0 && planet.size === MEDIUM) {
 			if (planet.control === 'player') {
     			planet.playerShips++;
 			} else {
@@ -34,30 +42,48 @@ setInterval(() => {
 
 let planets = [{
 	id: 0,
+	x: 100,
+	y: 100,
 	playerShips: 0,
 	neutralShips: 0,
-	size: BIG,
+	size: MEDIUM,
 	control: 'player',
 }, {
 	id: 1,
+	x: 350,
+	y: 100,
 	playerShips: 0,
 	neutralShips: 0,
 	size: SMALL,
 	control: 'neutral',
 }, {
 	id: 2,
+	x: 250,
+	y: 250,
 	playerShips: 0,
 	neutralShips: 0,
 	size: SMALL,
 	control: 'neutral',
+}, {
+	id: 3,
+	x: 450,
+	y: 300,
+	playerShips: 0,
+	neutralShips: 0,
+	size: BIG,
+	control: 'neutral',
 }];
 
-const points = (index, i) => {
-	let positionX = ((index % 20) * 8) + (i * 250);
-    let positionY = Math.floor(index / 20) * 12;
-	return (102 + positionX) + "," + (100 + positionY) + " " + 
-		(100 + positionX) + "," + (107 + positionY) + " " +
-		(107 + positionX) + "," + (103 + positionY);
+const lines = [[0,1],[0,2],[2,3]];
+
+const points = (x, y, index) => {
+	x = x - 50;
+	y = y - 50;
+	let positionX = ((index % 15) * 8) ;
+    let positionY = Math.floor(index / 15) * 12;
+	return (x + 2 + positionX) + "," + (y + positionY) + " " + 
+		(x + positionX) + "," + (y + 7 + positionY) + " " +
+		(x + 7 + positionX) + "," + (y + 3 + positionY);
 }
 </script>
 
@@ -75,34 +101,27 @@ const points = (index, i) => {
     			}}
 			>
         		<circle
-        			cx={150 + (i * 250)}
-        			cy="150"
+        			cx={planet.x}
+        			cy={planet.y}
         			r={planet.size}
         			fill={planet.control === 'player' ? "green" : "grey"}
 					stroke-width="2"
 					stroke={selected === planet.id ? "blue" : "black"}
         		/>
-        		<!-- <text
-        			x={150 + (i * 250)}
-        			y="160"
-        			font-size="30"
-        			text-anchor="middle"
-        			fill="white"
-        		>
-					{planet.playerShips + planet.neutralShips}
-				</text> -->
 			</g>
 			{#each
 				{ length: planet.playerShips + planet.neutralShips }
 				as spaceship, index
 			}
     			<polygon
-					points={points(index,i)}
+					points={points(planet.x, planet.y, index)}
 					style={"fill:" + (index < planet.playerShips ? "lime" : "grey")}
 					stroke="black"
 					stroke-width="1"
 				/>
 			{/each}
+		{/each}
+		{#each lines as line}
 		{/each}
 	</svg>
 </main>
